@@ -107,7 +107,13 @@ def get_jobs(page: int = Query(default=1, ge=1), count: int = Query(default=5, g
     return {"pagination": get_pageination(page, count), "data": jobs}
 
 @app.post("/gen")
-def gen(request: CustomRequest):
+def gen(request: CustomRequest, x_api_key: str = Header(None, description="its da API key")):
+    
+    if not x_api_key:
+        raise HTTPException(status_code = 401, detail = "Missing API Key.")
+    if x_api_key != SECRET_API_KEY:
+        raise HTTPException(status_code=403, detail="Invalid API key.")
+    
     results = []
     for _ in range(request.count):
         item = {}
@@ -115,6 +121,7 @@ def gen(request: CustomRequest):
             try:
                 item[field] = getattr(fake, field)()
             except AttributeError:
-                item[field] = "Field not supported"
+                # Proper error message instead of crashing
+                item[field] = f"ERROR: '{field}' is not a valid parameter."
         results.append(item)
-    return{"data": results}
+    return {"data": results}
