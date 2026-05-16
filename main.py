@@ -12,7 +12,7 @@ class CustomRequest(BaseModel):
     fields: List[str] = Field(..., min_length=1)
     count: Optional[int] = Field(default=1, ge=1, le=10)
 
-def get_pageination(page: int, count: int):
+def get_pagination(page: int, count: int):
     return {"current_page": page, "item_per_page": count}
 
 @app.get("/")
@@ -33,7 +33,7 @@ def get_users(count: int = Query(default=5, le=100), page: int = Query(default=1
             "email": fake.email(),
             "address": fake.city()
         })
-    return {"pagination": get_pageination(page, count), "data": users}
+    return {"pagination": get_pagination(page, count), "data": users}
 
 @app.get("/products")
 def get_products(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
@@ -46,7 +46,7 @@ def get_products(count: int = Query(default=5, le=100), page: int = Query(defaul
             "category": fake.word(),
             "description": fake.sentence()
         })
-    return {"pagination": get_pageination(page, count), "data": products}
+    return {"pagination": get_pagination(page, count), "data": products}
 
 @app.get("/cards")
 def get_cards(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
@@ -60,7 +60,7 @@ def get_cards(count: int = Query(default=5, le=100), page: int = Query(default=1
             "card_holder": fake.name(),
             "card_holder_address": fake.address()
         })
-    return {"pagination": get_pageination(page, count), "data": cards}
+    return {"pagination": get_pagination(page, count), "data": cards}
 
 @app.get("/companies")
 def get_companies(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
@@ -72,7 +72,7 @@ def get_companies(count: int = Query(default=5, le=100), page: int = Query(defau
             "address": fake.address(),
             "number": fake.phone_number()
         })
-    return {"pagination": get_pageination(page, count), "data": companies}
+    return {"pagination": get_pagination(page, count), "data": companies}
 
 
 @app.get("/crypto")
@@ -84,7 +84,7 @@ def get_crypto(page: int = Query(default=1, ge=1), count: int = Query(default=5,
             "code": fake.cryptocurrency_code(),
             "wallet_address": f"0x{fake.sha256()[:40]}"
         })
-    return {"pagination": get_pageination(page, count), "data": crypto}
+    return {"pagination": get_pagination(page, count), "data": crypto}
 
 @app.get("/colors")
 def get_colors(page: int = Query(default=1, ge=1), count: int = Query(default=5, ge=1, le=100)):
@@ -94,7 +94,7 @@ def get_colors(page: int = Query(default=1, ge=1), count: int = Query(default=5,
             "color_name": fake.color_name(),
             "color_value": fake.hex_color()
         })
-    return {"pagination": get_pageination(page, count), "data": colors}
+    return {"pagination": get_pagination(page, count), "data": colors}
 
 @app.get("/jobs")
 def get_jobs(page: int = Query(default=1, ge=1), count: int = Query(default=5, ge=1, le=100)):
@@ -104,7 +104,7 @@ def get_jobs(page: int = Query(default=1, ge=1), count: int = Query(default=5, g
             "job_title": fake.job(),
             "company": fake.company()
         })
-    return {"pagination": get_pageination(page, count), "data": jobs}
+    return {"pagination": get_pagination(page, count), "data": jobs}
 
 @app.post("/gen")
 def gen(request: CustomRequest, x_api_key: str = Header(None, description="its da API key")):
