@@ -12,6 +12,9 @@ class CustomRequest(BaseModel):
     fields: List[str] = Field(..., min_length=1)
     count: Optional[int] = Field(default=1, ge=1, le=10)
 
+def get_pageination(page: int, count: int):
+    return {"current_page": page, "item_per_page": count}
+
 @app.get("/")
 def root():
     return {
@@ -21,8 +24,7 @@ def root():
     }
 
 @app.get("/users")
-def get_users(count: int = Query(default=5, le=100)):
-    """Generates a list of fake user profiles."""
+def get_users(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
     users = []
     for _ in range(count):
         users.append({
@@ -31,10 +33,10 @@ def get_users(count: int = Query(default=5, le=100)):
             "email": fake.email(),
             "address": fake.city()
         })
-    return {"count": count, "data": users}
+    return {"pagination": get_pageination(page, count), "data": users}
 
 @app.get("/products")
-def get_products(count: int = Query(default=5, le=100)):
+def get_products(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
     products = []
     for _ in range(count):
         products.append({
@@ -44,10 +46,10 @@ def get_products(count: int = Query(default=5, le=100)):
             "category": fake.word(),
             "description": fake.sentence()
         })
-    return {"count": count, "data": products}
+    return {"pagination": get_pageination(page, count), "data": products}
 
 @app.get("/cards")
-def get_cards(count: int = Query(default=5, le=100)):
+def get_cards(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
     cards = []
     for _ in range(count):
         cards.append({
@@ -58,10 +60,10 @@ def get_cards(count: int = Query(default=5, le=100)):
             "card_holder": fake.name(),
             "card_holder_address": fake.address()
         })
-    return {"count": count, "data": cards}
+    return {"pagination": get_pageination(page, count), "data": cards}
 
 @app.get("/companies")
-def get_companies(count: int = Query(default=5, le=100)):
+def get_companies(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
     companies = []
     for _ in range(count):
         companies.append({
@@ -70,7 +72,8 @@ def get_companies(count: int = Query(default=5, le=100)):
             "address": fake.address(),
             "number": fake.phone_number()
         })
-    return {"count": count, "data": companies}
+    return {"pagination": get_pageination(page, count), "data": companies}
+
 
 @app.post("/gen")
 def gen(request: CustomRequest):
