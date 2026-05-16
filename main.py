@@ -3,7 +3,17 @@ from faker import Faker
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-app = FastAPI()
+app = FastAPI(
+    title="MockaPi",
+    description="""
+    Welcome to the MockaPi documentation! 
+    
+    REQUIRED AUTH FOR POST ENDPOINT:
+    To use the `POST /gen` endpoint, click the 'Try it out' button and enter the following demo key in the `x-api-key` header box:
+    Value: `eyelawview`
+    """,
+    version="1.0.0"
+)
 fake = Faker()
 
 SECRET_API_KEY = "eyelawview"
@@ -25,6 +35,9 @@ def root():
 
 @app.get("/users")
 def get_users(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
+    """
+    Fetch a paginated list of fake user profiles including names, emails, and cities.
+    """
     users = []
     for _ in range(count):
         users.append({
@@ -37,6 +50,9 @@ def get_users(count: int = Query(default=5, le=100), page: int = Query(default=1
 
 @app.get("/products")
 def get_products(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
+    """
+    Fetch a paginated list of fake products including id, name, price, category, and description.
+    """
     products = []
     for _ in range(count):
         products.append({
@@ -50,6 +66,9 @@ def get_products(count: int = Query(default=5, le=100), page: int = Query(defaul
 
 @app.get("/cards")
 def get_cards(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
+    """
+    Fetch a paginated list of fake credit cards including card_number, card_cvv, card_expiration_date, card_provider, card_holder, and card_holder_address.
+    """
     cards = []
     for _ in range(count):
         cards.append({
@@ -64,6 +83,9 @@ def get_cards(count: int = Query(default=5, le=100), page: int = Query(default=1
 
 @app.get("/companies")
 def get_companies(count: int = Query(default=5, le=100), page: int = Query(default=1, ge=1)):
+    """
+    Fetch a paginated list of fake campanies including name, emial, adress, and number.
+    """
     companies = []
     for _ in range(count):
         companies.append({
@@ -77,6 +99,9 @@ def get_companies(count: int = Query(default=5, le=100), page: int = Query(defau
 
 @app.get("/crypto")
 def get_crypto(page: int = Query(default=1, ge=1), count: int = Query(default=5, ge=1, le=100)):
+    """
+    Fetch a paginated list of fake of cryto including name, code, and wallet_address.
+    """
     crypto = []
     for _ in range(count):
         crypto.append({
@@ -88,6 +113,9 @@ def get_crypto(page: int = Query(default=1, ge=1), count: int = Query(default=5,
 
 @app.get("/colors")
 def get_colors(page: int = Query(default=1, ge=1), count: int = Query(default=5, ge=1, le=100)):
+    """
+    Fetch a paginated list of fake color_name, and color_value.
+    """
     colors = []
     for _ in range(count):
         colors.append({
@@ -98,6 +126,9 @@ def get_colors(page: int = Query(default=1, ge=1), count: int = Query(default=5,
 
 @app.get("/jobs")
 def get_jobs(page: int = Query(default=1, ge=1), count: int = Query(default=5, ge=1, le=100)):
+    """
+    Fetch a paginated list of fake jobs including job_title, and company.
+    """
     jobs = []
     for _ in range(count):
         jobs.append({
@@ -108,7 +139,19 @@ def get_jobs(page: int = Query(default=1, ge=1), count: int = Query(default=5, g
 
 @app.post("/gen")
 def gen(request: CustomRequest, x_api_key: str = Header(None, description="its da API key")):
+    """
+    Dynamically generate any fields you want using the Faker library.
     
+    **Example Request Body:**
+    ```json
+    {
+      "fields": ["name", "email", "phone_number"],
+      "count": 3
+    }
+    ```
+    *Note: Requires the header `x-api-key` set to `eyelawview`*
+    """
+
     if not x_api_key:
         raise HTTPException(status_code = 401, detail = "Missing API Key.")
     if x_api_key != SECRET_API_KEY:
