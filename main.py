@@ -75,6 +75,28 @@ def get_companies(count: int = Query(default=5, le=100), page: int = Query(defau
     return {"pagination": get_pageination(page, count), "data": companies}
 
 
+@app.get("/crypto")
+def get_crypto(page: int = Query(default=1, ge=1), count: int = Query(default=5, ge=1, le=100)):
+    crypto = []
+    for _ in range(count):
+        crypto.append({
+            "coin": fake.cryptocurrency_name(),
+            "code": fake.cryptocurrency_code(),
+            "wallet_address": f"0x{fake.sha256()[:40]}"
+        })
+    return {"pagination": get_pageination(page, count), "data": crypto}
+
+@app.get("/colors")
+def get_colors(page: int = Query(default=1, ge=1), count: int = Query(default=5, ge=1, le=100)):
+    colors = []
+    for _ in range(count):
+        colors.append({
+            "color_name": fake.color_name(),
+            "color_value": fake.hex_color()
+        })
+    return {"pagination": get_pagination(page, count), "data": colors}
+
+
 @app.post("/gen")
 def gen(request: CustomRequest):
     results = []
