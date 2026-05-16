@@ -94,8 +94,17 @@ def get_colors(page: int = Query(default=1, ge=1), count: int = Query(default=5,
             "color_name": fake.color_name(),
             "color_value": fake.hex_color()
         })
-    return {"pagination": get_pagination(page, count), "data": colors}
+    return {"pagination": get_pageination(page, count), "data": colors}
 
+@app.get("/jobs")
+def get_jobs(page: int = Query(default=1, ge=1), count: int = Query(default=5, ge=1, le=100)):
+    jobs = []
+    for _ in range(count):
+        jobs.append({
+            "job_title": fake.job(),
+            "company": fake.company()
+        })
+    return {"pagination": get_pageination(page, count), "data": jobs}
 
 @app.post("/gen")
 def gen(request: CustomRequest):
