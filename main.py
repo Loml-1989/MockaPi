@@ -1,14 +1,16 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Header, HTTPException
 from faker import Faker
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 app = FastAPI()
 fake = Faker()
 
+SECRET_API_KEY = "eyelawview"
+
 class CustomRequest(BaseModel):
-    fields: List[str]
-    count: Optional[int] = 1
+    fields: List[str] = Field(..., min_length=1)
+    count: Optional[int] = Field(default=1, ge=1, le=10)
 
 @app.get("/")
 def root():
@@ -38,7 +40,7 @@ def get_products(count: int = Query(default=5, le=100)):
         products.append({
             "product_id": fake.ean(),
             "name": fake.catch_phrase(),
-            "price": fake.random_number(digits=2),
+            "price": f"${fake.random_number(digits=2)}.{fake.random_number(digits=2)}",
             "category": fake.word(),
             "description": fake.sentence()
         })
@@ -57,6 +59,18 @@ def get_cards(count: int = Query(default=5, le=100)):
             "card_holder_address": fake.address()
         })
     return {"count": count, "data": cards}
+
+@app.get("/companies")
+def get_companies(count: int = Query(default=5, le=100)):
+    companies = []
+    for _ in range(count):
+        companies.append({
+            "name": fake.company(),
+            "email": fake.company_email(),
+            "address": fake.address(),
+            "number": fake.phone_number()
+        })
+    return {"count": count, "data": companies}
 
 @app.post("/gen")
 def gen(request: CustomRequest):
