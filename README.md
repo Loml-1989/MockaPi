@@ -1,5 +1,8 @@
 MockaPi is a API tool for anyone who wants to generate mock data for any reason.
 
+Public instances: 
+https://mockapi-seven.vercel.app
+
 - Framework: FastAPI
 - Lib for Generation: Faker
 - Validation: Pydantic
