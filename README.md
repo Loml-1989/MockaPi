@@ -15,3 +15,8 @@ It requires API key.
 Header Key: `x-api-key`
 Key: `eyelawview`
 
+How to run it locally?!?!
+- clone the repo
+- install the requirements.txt using `pip install -r requirements.txt` command
+- start the server using `uvicorn main:app --reload`
+- nevigate to http://127.0.0.1:8000/docs
